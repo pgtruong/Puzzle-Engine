@@ -12,16 +12,23 @@ public:
 	EventHandler();
 	~EventHandler();
 
-	bool addKeyMap(SDL_Event e, void (*function)());
-	bool addKeyMap(SDL_Event e, void (*function)(), Sprite s);
+	bool addKeyMap(SDLKey e, void (*function)());
+	bool addKeyMap(SDLKey e, void (*function)(), Sprite s);
 
 	bool update();
 	bool update(Sprite s);
 	bool update(Sprite* sprite_list, int list_size);
 
 private:
-	std::map<SDL_Keycode, std::is_function<void()>> keyMaps;
-	std::map<Sprite, SDL_Keycode> keyMapsSprite;
+	// Keymaps that apply to everything (like a default)
+	// Update checks this for a function 
+	// If nothing found, skips that input
+	std::map<SDLKey, std::is_function<void()>> keyMaps;
+
+	// Keymaps that apply only to specific sprites
+	// Update for Sprites or Sprite lists will check this first for a value before keyMaps
+	// If it does not find one it will check keyMaps
+	std::map<Sprite, std::map<SDLKey, std::is_function<void()>>> keyMapsSprite;
 };
 
 

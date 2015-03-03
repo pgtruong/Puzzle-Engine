@@ -4,8 +4,27 @@
 EventHandler::EventHandler() {}
 EventHandler::~EventHandler() {}
 
-bool EventHandler::addKeyMap(SDL_Event e, void (*function)()) {return true;}
-bool EventHandler::addKeyMap(SDL_Event e, void (*function)(), Sprite s) {return true;}
+bool EventHandler::addKeyMap(SDLKey k, void (*function)()) {
+	try {
+		keyMaps.insert(std::pair<SDLKey, void (*function)()>(k, function));
+		std::cout << "Keymap added" << std::endl;
+		return true;
+	} catch (...) {
+		std::cout << "Keymap failed" << std::endl;
+		return false;
+	}
+}
+
+bool EventHandler::addKeyMap(SDLKey k, void (*function)(), Sprite s) {
+	std::pair<SDLKey, void (*function)()> keyPair(k, function);
+	try {
+		keyMapsSprite.insert(std::pair<Sprite, std::pair<SDLKey, void (*function)()>>(s, keyPair));
+		std::cout << "Sprite Keymap added" << std::endl;
+		return true;
+	} catch (...) {
+		return false;
+	}
+}
 
 // Updates everything
 bool EventHandler::update() {
@@ -21,8 +40,18 @@ bool EventHandler::update() {
 		// else check whether e is key down or etc.
 		else if (e.type == SDL_KEYDOWN) {	
 			// check what key was pressed
-			std::cout << e.key.keysym.sym << " was pressed" << std::endl;
+			SDLKey pressed = e.key.keysym.sym;
+			std::cout << pressed << " was pressed" << std::endl;
 				// if the key is in the mapping call the function
+			auto findValue = keyMaps.find(pressed);
+			if (findValue != keyMaps.end()) {
+				try {
+					(keyMaps[pressed])();
+					std::cout << "Function excuted" << std::endl;
+				} catch (...) {
+					std::cout << "Execution failed" << std::endl;
+				}
+			}
 		}
 	}
 	return quit;
@@ -42,7 +71,8 @@ bool EventHandler::update(Sprite s) {
 		// else check whether e is key down or etc.
 		else if (e.type == SDL_KEYDOWN) {	
 			// check what key was pressed
-			std::cout << e.key.keysym.sym << " was pressed" << std::endl;
+			SDLKey pressed = e.key.keysym.sym;
+			std::cout << pressed << " was pressed" << std::endl;
 				// if the key is in the mapping for specific sprite call the function
 		}
 	}
@@ -63,6 +93,7 @@ bool EventHandler::update(Sprite* sprite_list, int list_size) {
 		// else check whether e is key down or etc.
 		else if (e.type == SDL_KEYDOWN) {	
 			// check what key was pressed
+			SDLKey pressed = pressed;
 			std::cout << e.key.keysym.sym << " was pressed" << std::endl;
 			for (int i = 0; i < list_size; i++) {
 				// if the key is in the mapping for specific sprite call the function
