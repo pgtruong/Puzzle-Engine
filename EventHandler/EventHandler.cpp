@@ -1,12 +1,12 @@
-#include "EventHandler.h"
+#include "EventHandler/EventHandler.h"
 #include "Sprite.h"
 
 EventHandler::EventHandler() {}
 EventHandler::~EventHandler() {}
 
-bool EventHandler::addKeyMap(SDLKey k, void (*function)()) {
+bool EventHandler::addKeyDown(SDL_Keycode k, void (*function)()) {
 	try {
-		keyMaps.insert(std::pair<SDLKey, void (*function)()>(k, function));
+		keyMapsDown.insert(std::pair<SDL_Keycode, void (*function)()>(k, function));
 		std::cout << "Keymap added" << std::endl;
 		return true;
 	} catch (...) {
@@ -15,12 +15,43 @@ bool EventHandler::addKeyMap(SDLKey k, void (*function)()) {
 	}
 }
 
-bool EventHandler::addKeyMap(SDLKey k, void (*function)(), Sprite s) {
-	std::pair<SDLKey, void (*function)()> keyPair(k, function);
+bool EventHandler::addKeyDown(SDL_Keycode k, void (*function)(), Sprite s) {
+	std::pair<SDL_Keycode, void (*function)()> keyPair(k, function);
 	try {
-		keyMapsSprite.insert(std::pair<Sprite, std::pair<SDLKey, void (*function)()>>(s, keyPair));
+		keyMapsDownSprite.insert(std::pair<Sprite, std::pair<SDL_Keycode, void (*function)()>>(s, keyPair));
 		std::cout << "Sprite Keymap added" << std::endl;
 		return true;
+	} catch (...) {
+		return false;
+	}
+}
+
+bool EventHandler::addKeyUp(SDL_Keycode k, void (*function)()) {
+	try {
+		keyMapsUp.insert(std::pair<SDL_Keycode, void (*function)()>(k, function));
+		std::cout << "Keymap added" << std::endl;
+		return true;
+	} catch (...) {
+		std::cout << "Keymap failed" << std::endl;
+		return false;
+	}
+}
+
+bool EventHandler::addKeyUp(SDL_Keycode k, void (*function)(), Sprite s) {
+	std::pair<SDL_Keycode, void (*function)()> keyPair(k, function);
+	try {
+		keyMapsUpSprite.insert(std::pair<Sprite, std::pair<SDL_Keycode, void (*function)()>>(s, keyPair));
+		std::cout << "Sprite Keymap added" << std::endl;
+		return true;
+	} catch (...) {
+		return false;
+	}
+}
+
+bool addGenericEvent(Uint32 e, void(*function)()) {
+	try {
+		keyMapsGeneric.insert(std::pair<Uint32, void (*function)()>(e, function));
+		std::cout << "Keymap added" << std::endl;
 	} catch (...) {
 		return false;
 	}
@@ -30,30 +61,51 @@ bool EventHandler::addKeyMap(SDLKey k, void (*function)(), Sprite s) {
 bool EventHandler::update() {
 	bool quit = false;
 	SDL_Event e;
-	while (SDL_PollEvent(&e)){
-		std::cout << "Updating in progress" << std::endl;
-		// if key is quit, quit is true
-		if (e.type == SDL_QUIT) {
-				quit = true;
-				break;
-		}
-		// else check whether e is key down or etc.
-		else if (e.type == SDL_KEYDOWN) {	
-			// check what key was pressed
-			SDLKey pressed = e.key.keysym.sym;
-			std::cout << pressed << " was pressed" << std::endl;
-				// if the key is in the mapping call the function
-			auto findValue = keyMaps.find(pressed);
-			if (findValue != keyMaps.end()) {
-				try {
-					(keyMaps[pressed])();
-					std::cout << "Function excuted" << std::endl;
-				} catch (...) {
-					std::cout << "Execution failed" << std::endl;
-				}
+	SDL_PollEvent(&e);
+	
+	std::cout << "Updating in progress" << std::endl;
+	// if key is quit, quit is true
+	if (e.type == SDL_QUIT) {
+			quit = true;
+			break;
+	}
+	
+	// else check whether e is key down
+	else if (e.type == SDL_KEYDOWN) {	
+		// check what key was pressed
+		SDL_Keycode pressed = e.key.keysym;
+		std::cout << pressed.sym << " was pressed" << std::endl;
+			// if the key is in the mapping call the function
+		auto findValue = keyMapsDown.find(pressed);
+		if (findValue != keyMapsDown.end()) {
+			try {
+				(keyMapsDown[pressed])();
+				std::cout << "Function excuted" << std::endl;
+			} catch (...) {
+				std::cout << "Execution failed" << std::endl;
 			}
 		}
 	}
+
+	// else check whether e is key up
+	else if (e.type == SDL_KEYUP) {	
+		// check what key was released
+		SDL_Keycode released = e.key.keysym;
+		std::cout << released.sym << " was released" << std::endl;
+			// if the key is in the mapping call the function
+		auto findValue = keyMapsUp.find(released);
+		if (findValue != keyMapsUp.end()) {
+			try {
+				(keyMapsUp[released])();
+				std::cout << "Function excuted" << std::endl;
+			} catch (...) {
+				std::cout << "Execution failed" << std::endl;
+			}
+		}
+	}
+
+
+	
 	return quit;
 }
 
