@@ -12,8 +12,13 @@ public:
 	EventHandler();
 	~EventHandler();
 
-	bool addKeyMap(SDLKey e, void (*function)());
-	bool addKeyMap(SDLKey e, void (*function)(), Sprite s);
+	bool addKeyDown(SDL_Keycode k, void (*function)());
+	bool addKeyDown(SDL_Keycode k, void (*function)(), Sprite s);
+
+	bool addKeyUp(SDL_Keycode k, void (*function)());
+	bool addKeyUp(SDL_Keycode k, void (*function)(), Sprite s);
+
+	bool addGenericEvent(Uint32, void(*function)());
 
 	bool update();
 	bool update(Sprite s);
@@ -23,45 +28,16 @@ private:
 	// Keymaps that apply to everything (like a default)
 	// Update checks this for a function 
 	// If nothing found, skips that input
-	std::map<SDLKey, std::is_function<void()>> keyMaps;
+	std::map<SDL_Keycode, std::is_function<void()>> keyMapsUp;
+	std::map<SDL_Keycode, std::is_function<void()>> keyMapsDown;
+	std::map<Uint32, std::is_function<void()>> keyMapsGeneric;
 
 	// Keymaps that apply only to specific sprites
 	// Update for Sprites or Sprite lists will check this first for a value before keyMaps
 	// If it does not find one it will check keyMaps
-	std::map<Sprite, std::map<SDLKey, std::is_function<void()>>> keyMapsSprite;
+	std::map<Sprite, std::map<SDL_Keycode, std::is_function<void()>>> keyMapsUpSprite;
+	std::map<Sprite, std::map<SDL_Keycode, std::is_function<void()>>> keyMapsDownSprite;
+	std::map<Sprite, std::map<Uint32, std::is_function<void()>>> keyMapsGenericSprite;
 };
-
-
-////SDL_Keycode is the TYPE of a KEY, so this is what we want the "keys" of our "keymap" to be
-////Because of the way MAP works, each function must have the same parameters
-//std::map<SDL_Keycode, std::function<void(imageFrame* image, SDL_Texture* tex)>> keymap;
-//
-//keymap.insert(std::pair<SDL_Keycode, std::function<void(imageFrame* image, SDL_Texture* tex)>>(SDLK_RIGHT, right_function));
-//keymap.insert(std::pair<SDL_Keycode, std::function<void(imageFrame* image, SDL_Texture* tex)>>(SDLK_LEFT, left_function));
-//keymap.insert(std::pair<SDL_Keycode, std::function<void(imageFrame* image, SDL_Texture* tex)>>(SDLK_UP, up_function));
-//keymap.insert(std::pair<SDL_Keycode, std::function<void(imageFrame* image, SDL_Texture* tex)>>(SDLK_DOWN, down_function));
-//
-//
-//SDL_Event e;
-//bool quit = false;
-//while (!quit){
-//	while (SDL_PollEvent(&e)){
-//		if (e.type == SDL_QUIT){
-//			quit = true;
-//		}
-//		if (e.type == SDL_KEYDOWN){
-//			//Here we check if the key that was pressed maps to a value (if we omit this step it throws an error)
-//			if (keymap.count(e.key.keysym.sym)>0)
-//				//Here we call the map with [the_key_we_want] (in this case whichever key was pressed)
-//				//We also pass any relevent parameters here
-//				keymap[e.key.keysym.sym](image, spritesheet);
-//			//This would most likely all be part of our event_handler class, and it may be more complex
-//			//(not sure, that might be out of scope), but this is just a tech-test of storing
-//			//keymappings in a way similar to how most games store them
-//		}
-//		if (e.type == SDL_KEYUP)
-//			if (image->getVisible())
-//				image->toggleVisible();
-//	}
 
 #endif //_Event Handler
