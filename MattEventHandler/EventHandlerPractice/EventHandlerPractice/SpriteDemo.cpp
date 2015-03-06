@@ -103,6 +103,12 @@ int main(int argc, char **argv){
 
 
 
+
+
+
+
+
+
 	//Some of these variables are static, take note of this, I explain why in a little bit
 	static Sprite* sprite1 = new Sprite(20, 20, renderer);
 	for (int i = 0; i < 4; ++i)
@@ -121,6 +127,15 @@ int main(int argc, char **argv){
 
 
 
+	//Creating the pointers to store the mouse's location
+	int tempx = 0;
+	int tempy = 0;
+
+	static int* mousex = &tempx;
+	static int* mousey = &tempy;
+
+
+
 	//Helper Functions
 	struct localFunctions{
 		static void moveSpritex(int distance, std::string walkDirection){
@@ -134,16 +149,6 @@ int main(int argc, char **argv){
 		}
 	};
 
-
-
-
-
-
-
-
-
-
-
 	//The following is how we can have a map that takes void functions with no parameters:
 	//We use lambdas
 	//(I'll try and explain as best I can in class, if anyone's confused)
@@ -151,7 +156,10 @@ int main(int argc, char **argv){
 	//Make sure that any variables you need to use in these local definitions are "static" (spriteDirection, sprite1)
 	//Same with the local functions you define
 	
-	EventHandler handler;
+
+
+	//The mouse location pointers are passed to the event handler on construction
+	EventHandler handler(mousex, mousey);
 	handler.addKeyDown(SDLK_RIGHT, [](){ localFunctions::moveSpritex(2, "walk right"); });
 	handler.addKeyDown(SDLK_LEFT, [](){ localFunctions::moveSpritex(-2, "walk left"); });
 	handler.addKeyDown(SDLK_UP, [](){ localFunctions::moveSpritey(-2, "walk up"); });
@@ -167,6 +175,14 @@ int main(int argc, char **argv){
 
 	handler.addGenericEvent(SDL_KEYUP, [](){ spriteDirection = "idle"; });
 	handler.addGenericEvent(SDL_QUIT, [](){std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::endl; });
+
+	//Mouse Button Testing
+	handler.addLeftClick([](){ std::cout << "Single Left Click at; " << *mousex << ", " << *mousey << std::endl; }, false);
+	handler.addLeftClick([](){ std::cout << "Double Left Click at; " << *mousex << ", " << *mousey << std::endl; }, true);
+	handler.addRightClick([](){ std::cout << "Single Right Click at; " << *mousex << ", " << *mousey << std::endl; }, false);
+	handler.addRightClick([](){ std::cout << "Double Right Click at; " << *mousex << ", " << *mousey << std::endl; }, true);
+	handler.addMiddleClick([](){ std::cout << "Single Middle Click at; " << *mousex << ", " << *mousey << std::endl; }, false);
+	handler.addMiddleClick([](){ std::cout << "Double Middle Click at; " << *mousex << ", " << *mousey << std::endl; }, true);
 
 	while (!handler.update()){
 		//Render the scene
