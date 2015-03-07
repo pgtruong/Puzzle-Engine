@@ -69,6 +69,8 @@ int main(int argc, char **argv){
 		return 1;
 	}
 
+	std::vector<Sprite*> spritecollection; //holds references to all sprites except bg
+
 	const std::string resPath = getResourcePath("SpriteDemo");
 	// background is from "iceland1.jpg" at theadventurousmailbox.com
 	SDL_Texture *background = loadTexture(resPath + "tempboardbg.png", renderer); //changed background texture
@@ -82,6 +84,7 @@ int main(int argc, char **argv){
 
 	Sprite* spriteBG = new Sprite(SCREEN_WIDTH, SCREEN_HEIGHT, renderer);
 	spriteBG->setPos(0, 0);
+	spriteBG->setID("BACKGROUND");
 	int bgFrame = spriteBG->makeFrame(background, 0, 0);
 
 	SDL_Texture *spritesheet = loadTexture(resPath + "myspritesheet.png", renderer);
@@ -93,6 +96,8 @@ int main(int argc, char **argv){
 		return 1;
 	}
 	Sprite* sprite = new Sprite(25, 25, renderer);
+
+	sprite->setID("PLAYER");
 	sprite->addFrameToSequence("walk right", sprite->makeFrame(spritesheet, 0, 50));
 	sprite->addFrameToSequence("walk right", sprite->makeFrame(spritesheet, 25, 50));
 	sprite->addFrameToSequence("walk right", sprite->makeFrame(spritesheet, 50, 50));
@@ -120,6 +125,23 @@ int main(int argc, char **argv){
 	sprite->addFrameToSequence("float down", sprite->makeFrame(spritesheet, 150, 0));
 	sprite->addFrameToSequence("float down", sprite->makeFrame(spritesheet, 175, 0));
 
+	spritecollection.push_back(sprite);
+
+	
+	SDL_Texture *shrub = loadTexture(resPath + "shrub.png", renderer);
+	if (shrub == nullptr){
+		cleanup(shrub, renderer, window);
+		IMG_Quit();
+		SDL_Quit();
+		return 1;
+	}
+
+	Sprite* obstacle1 = new Sprite(50, 50, renderer); //random objects
+	obstacle1->setID("SHRUB");
+	obstacle1->setPos(200, 200);
+	int obstacleframe = obstacle1->makeFrame(shrub, 0, 0);
+	spritecollection.push_back(obstacle1);
+
 	int x = SCREEN_WIDTH / 2;
 	int y = SCREEN_HEIGHT / 2;
 	sprite->setPos(x, y);
@@ -134,7 +156,119 @@ int main(int argc, char **argv){
 			if (e.type == SDL_QUIT){
 				quit = true;
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 1)
+			std::vector<Sprite*>::iterator it; //collding not working
+			if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->NONE) //sprite is inside boundary, not touching the "walls/corners"
+			{
+				for (it = spritecollection.begin(); it != spritecollection.end(); ++it) //going through each sprite to test for collision
+				{
+					if (physic->collisiondetection(sprite, *it) == physic->LEFT) //it is touching sprite's left
+					{
+						if (e.type == SDL_KEYDOWN){
+							if (e.key.keysym.sym == SDLK_RIGHT)
+							{
+								sprite->movex(5);
+								spriteDirection = "walk right";
+							}
+							else if (e.key.keysym.sym == SDLK_UP)
+							{
+								sprite->movey(-5);
+								spriteDirection = "float up";
+							}
+							else if (e.key.keysym.sym == SDLK_DOWN)
+							{
+								sprite->movey(5);
+								spriteDirection = "float down";
+							}
+						}
+					}
+					else if (physic->collisiondetection(sprite, *it) == physic->RIGHT) //object is touching sprite's right
+					{
+						if (e.type == SDL_KEYDOWN){
+							if (e.key.keysym.sym == SDLK_LEFT)
+							{
+								sprite->movex(-5);
+								spriteDirection = "walk left";
+							}
+							else if (e.key.keysym.sym == SDLK_UP)
+							{
+								sprite->movey(-5);
+								spriteDirection = "float up";
+							}
+							else if (e.key.keysym.sym == SDLK_DOWN)
+							{
+								sprite->movey(5);
+								spriteDirection = "float down";
+							}
+						}
+					}
+					else if (physic->collisiondetection(sprite, *it) == physic->TOP) //object is touching sprite's top
+					{
+						if (e.type == SDL_KEYDOWN){
+							if (e.key.keysym.sym == SDLK_RIGHT)
+							{
+								sprite->movex(5);
+								spriteDirection = "walk right";
+							}
+							else if (e.key.keysym.sym == SDLK_LEFT)
+							{
+								sprite->movex(-5);
+								spriteDirection = "walk left";
+							}
+							else if (e.key.keysym.sym == SDLK_DOWN)
+							{
+								sprite->movey(5);
+								spriteDirection = "float down";
+							}
+						}
+					}
+					else if (physic->collisiondetection(sprite, *it) == physic->BOTTOM) //object is touching sprite's bottom
+					{
+						if (e.type == SDL_KEYDOWN){
+							if (e.key.keysym.sym == SDLK_RIGHT)
+							{
+								sprite->movex(5);
+								spriteDirection = "walk right";
+							}
+							else if (e.key.keysym.sym == SDLK_LEFT)
+							{
+								sprite->movex(-5);
+								spriteDirection = "walk left";
+							}
+							else if (e.key.keysym.sym == SDLK_UP)
+							{
+								sprite->movey(-5);
+								spriteDirection = "float up";
+							}
+						}
+					}
+					else
+					{
+						if (e.type == SDL_KEYDOWN){
+							if (e.key.keysym.sym == SDLK_RIGHT)
+							{
+								sprite->movex(5);
+								spriteDirection = "walk right";
+							}
+							else if (e.key.keysym.sym == SDLK_LEFT)
+							{
+								sprite->movex(-5);
+								spriteDirection = "walk left";
+							}
+							else if (e.key.keysym.sym == SDLK_UP)
+							{
+								sprite->movey(-5);
+								spriteDirection = "float up";
+							}
+							else if (e.key.keysym.sym == SDLK_DOWN)
+							{
+								sprite->movey(5);
+								spriteDirection = "float down";
+							}
+						}
+					}
+				}
+			}
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->TOPLEFT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -149,7 +283,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 2)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->TOPRIGHT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_LEFT)
@@ -164,7 +298,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 3)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->BOTTOMLEFT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -179,7 +313,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 4)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->BOTTOMRIGHT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_LEFT)
@@ -194,7 +328,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 5)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->LEFT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -214,7 +348,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 6)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->RIGHT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_LEFT)
@@ -234,7 +368,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 7)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->TOP)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -254,7 +388,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 8)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->BOTTOM)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -271,32 +405,6 @@ int main(int argc, char **argv){
 					{
 						sprite->movey(-5);
 						spriteDirection = "float up";
-					}
-				}
-			}
-
-			else
-			{
-				if (e.type == SDL_KEYDOWN){
-					if (e.key.keysym.sym == SDLK_RIGHT)
-					{
-						sprite->movex(5);
-						spriteDirection = "walk right";
-					}
-					else if (e.key.keysym.sym == SDLK_LEFT)
-					{
-						sprite->movex(-5);
-						spriteDirection = "walk left";
-					}
-					else if (e.key.keysym.sym == SDLK_UP)
-					{
-						sprite->movey(-5);
-						spriteDirection = "float up";
-					}
-					else if (e.key.keysym.sym == SDLK_DOWN)
-					{
-						sprite->movey(5);
-						spriteDirection = "float down";
 					}
 				}
 			}
@@ -304,6 +412,7 @@ int main(int argc, char **argv){
 		//Render the scene
 		SDL_RenderClear(renderer);
 		spriteBG->show(bgFrame);
+		obstacle1->show(obstacleframe);
 		sprite->show(spriteDirection.c_str());
 		SDL_RenderPresent(renderer);
 	}
