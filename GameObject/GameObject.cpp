@@ -1,28 +1,24 @@
-#include <string>
-#include <iostream>
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include "SuperAmazingEngine\EventHandler\EventHandler.h"
+#include "GameObject.h"
 
-
-class GameObject
+GameObject::GameObject(EventHandler* eve, Physics* phy, RenderManager* ren)
 {
-public:
+	even = eve;
+	phys = phy;
+	rend = ren;
+}
 
-	GameObject(EventHandler eventHandle, PhysicsComponent* physics, GraphicsComponent* graphics)
-	{
+GameObject:: ~GameObject()  //I don't think this needs to do anything
+{
+}
 
-	}
+void GameObject::update(gameBoard& board) //runs all update functions in one update
+{
+	eve->update();
+	ren->update();
+}
 
-	void update(puzzleboard& board, renderer& render)
-	{
-		input_->update(*this);
-		graphics_->update(*this, render);
-	}
+EventHandler* even;
+Physics* phys;
+RenderManager* rend;
 
-private:
-	EventHandler eventHandle;
-	PhysicsComponent* physics_;
-	GraphicsComponent* graphics_;
-};
 
