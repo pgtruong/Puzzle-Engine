@@ -1,6 +1,6 @@
 #include "EventHandler.h"
 
-EventHandler::EventHandler() {}
+EventHandler::EventHandler(int* x, int* y) : mouseX{x}, mouseY{y} {}
 EventHandler::~EventHandler() {}
 
 bool EventHandler::addKeyDown(SDL_Keycode k, void (*function)(void)) {
@@ -31,6 +31,27 @@ bool EventHandler::addGenericEvent(Uint32 e, void(*function)(void)) {
 	}
 }
 
+void EventHandler::addLeftClick(void(*function)(void), bool double_click){
+	if (double_click)
+		doubleLeftClickMappings.push_back(function);
+	else
+		singleLeftClickMappings.push_back(function);
+}
+
+void EventHandler::addRightClick(void(*function)(void), bool double_click){
+	if (double_click)
+		doubleRightClickMappings.push_back(function);
+	else
+		singleRightClickMappings.push_back(function);
+}
+
+void EventHandler::addMiddleClick(void(*function)(void), bool double_click){
+	if (double_click)
+		doubleMiddleClickMappings.push_back(function);
+	else
+		singleMiddleClickMappings.push_back(function);
+}
+
 // Updates everything
 bool EventHandler::update() {
 	bool quit = false;
@@ -45,6 +66,30 @@ bool EventHandler::update() {
 	// if event is quit, quit is true
 	if (e.type == SDL_QUIT) 
 		quit = true;
+
+	else if (e.type == SDL_MOUSEBUTTONDOWN) {
+		*mouseX = e.button.x;
+		*mouseY = e.button.y;
+
+		if (e.button.button == SDL_BUTTON_LEFT && e.button.clicks >= 2)
+			for(auto function : doubleLeftClickMappings)
+				function();
+		else if (e.button.button == SDL_BUTTON_LEFT)
+			for (auto function : singleLeftClickMappings)
+				function();
+		else if (e.button.button == SDL_BUTTON_RIGHT && e.button.clicks >= 2)
+			for (auto function : doubleRightClickMappings)
+				function();
+		else if (e.button.button == SDL_BUTTON_RIGHT)
+			for (auto function : singleRightClickMappings)
+				function();
+		else if (e.button.button == SDL_BUTTON_MIDDLE && e.button.clicks >= 2)
+			for (auto function : doubleMiddleClickMappings)
+				function();
+		else if (e.button.button == SDL_BUTTON_MIDDLE)
+			for (auto function : singleMiddleClickMappings)
+				function();
+	}
 
 	// else check whether e is key down or etc.
 	else if (e.type == SDL_KEYDOWN) {	
