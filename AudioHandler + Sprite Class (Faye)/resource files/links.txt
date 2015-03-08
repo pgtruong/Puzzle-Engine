@@ -1,0 +1,28 @@
+SDL MIXER:
+
+SDL_mixer Tutorial
+http://lazyfoo.net/tutorials/SDL/21_sound_effects_and_music/index.php
+
+SDL_mixer Download
+http://www.libsdl.org/projects/SDL_mixer/
+
+
+AUDIO TRACKS:
+
+c_boo.wav, m_chase.mp3, m_house.mp3, and m_merry.mp3
+Nintendo; extracted from www.youtube.com
+
+c_high.wav, c_low.wav, c_medium.wav, c_scratch.wav, m_beat.wav
+LazyFoo; extracted from http://lazyfoo.net/tutorials/SDL/21_sound_effects_and_music/index.php
+
+m_fat.mp3
+Self-creation
+
+
+IMAGE FILES:
+
+boo.png
+http://www.spriters-resource.com/custom_edited/mario/sheet/17842/
+
+Background.png
+http://www.snesmaps.com/maps/SuperMarioWorld/SuperMarioWorldMap10BG.html
