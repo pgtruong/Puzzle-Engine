@@ -30,7 +30,7 @@ std::vector<std::vector<Type>> randomGen(std::vector<Type> inputs, int rows, int
 
 //randomwalk: same: keep track of last move, prevent from undoing it
 template<typename Type>
-std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, int rowInit, int colInit, int swaps);
+std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, int row_index_of_marked_piece, int col_index_of_marked_piece, int swaps);
 
 
 
@@ -106,11 +106,11 @@ std::vector<std::vector<Type>> randomGen(std::vector<Type> inputs, int rows, int
 }
 
 template<typename Type>
-std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, int markRinit, int markCinit, int swaps){
+std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, int row_index_of_marked_piece, int col_index_of_marked_piece, int swaps){
 	/*Randomly move a marked piece around a 2d board by swapping it with adjacent elements.
 	SLIDE PUZZLE DESIGNERS!!! USE THIS!!!*/
 	seedRandom();
-	int markR = markRinit; int markC = markCinit; //row/column coords of 'marked' piece (i.e. empty space in slide puzzle
+	int markR = row_index_of_marked_piece; int markC = col_index_of_marked_piece; //row/column coords of 'marked' piece (i.e. empty space in slide puzzle
 	int toSwapR = markR; int toSwapC = markC; //row/column coords of piece we're about to swap with
 	Type temp; //temp var for swapping
 	int dir; //direction of piece we are about to swap with
@@ -128,6 +128,7 @@ std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, 
 			temp = input[toSwapR][toSwapC]; //store toSwap in temp
 			input[toSwapR][toSwapC] = input[markR][markC]; //put marked piece into toSwap space
 			input[markR][markC] = temp; //put toSwap where marked piece was
+			//input[markR][markC] = "--";
 			markR = toSwapR; markC = toSwapC; //locate marked piece again
 			prevMove=2;
 		}
@@ -137,6 +138,7 @@ std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, 
 			temp = input[toSwapR][toSwapC]; //store toSwap in temp
 			input[toSwapR][toSwapC] = input[markR][markC]; //put marked piece into toSwap space
 			input[markR][markC] = temp; //put toSwap where marked piece was
+			//input[markR][markC] = "--";
 			markR = toSwapR; markC = toSwapC; //locate marked piece again
 			prevMove=3;
 		}
@@ -146,6 +148,7 @@ std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, 
 			temp = input[toSwapR][toSwapC]; //store toSwap in temp
 			input[toSwapR][toSwapC] = input[markR][markC]; //put marked piece into toSwap space
 			input[markR][markC] = temp; //put toSwap where marked piece was
+			//input[markR][markC] = "--";
 			markR = toSwapR; markC = toSwapC; //locate marked piece again
 			prevMove=0;
 		}
@@ -155,8 +158,9 @@ std::vector<std::vector<Type>> randomSwap(std::vector<std::vector<Type>> input, 
 			temp = input[toSwapR][toSwapC]; //store toSwap in temp
 			input[toSwapR][toSwapC] = input[markR][markC]; //put marked piece into toSwap space
 			input[markR][markC] = temp; //put toSwap where marked piece was
+			//input[markR][markC] = "--";
 			markR = toSwapR; markC = toSwapC; //locate marked piece again
-			prevMove=2;
+			prevMove=1;
 		}
 	}
 

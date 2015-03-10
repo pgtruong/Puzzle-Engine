@@ -3,25 +3,29 @@
 
 #include "randomization.h"
 #include <iostream>
+#include <sstream>
 
 int main(){
-	std::vector<std::string> inputs;
-	inputs.push_back("X");
+	//std::vector<std::string> inputs;
+	//inputs.push_back("X");
 
-	std::vector<std::vector<std::string>> newList = randomGen(inputs, 8, 8);
-	newList[0][0]="O";
-	for(int i=0;i<8;i++){
-		for(int j=0;j<8;j++){
-			std::cout << newList[i][j].c_str()<<", ";
+	//std::vector<std::vector<std::string>> newList = randomGen(inputs, 8, 8);
+	//newList[0][0]="O";
+	std::vector<std::vector<std::string>> newList(10,std::vector<std::string>(10));
+	for(int i=0;i<newList.size();i++){
+		for(int j=0;j<newList[0].size();j++){
+			newList[i][j] = std::to_string(i)+std::to_string(j);
+			std::cout << newList[i][j].c_str() <<" ";
 		}
 		std::cout << std::endl;
 	}
 	std::cout<<std::endl;
 
-	newList = randomSwap(newList, 0,0,64);
-	for(int i=0;i<8;i++){
-		for(int j=0;j<8;j++){
-			std::cout << newList[i][j].c_str()<<", ";
+	newList[9][9] = "__";
+	newList = randomSwap(newList, 9,9,1000);
+	for(int i=0;i<newList.size();i++){
+		for(int j=0;j<newList[0].size();j++){
+			std::cout << newList[i][j].c_str() <<" ";
 		}
 		std::cout << std::endl;
 	}
