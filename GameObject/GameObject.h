@@ -3,10 +3,10 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include "SuperAmazingEngine\EventHandler\EventHandler.h"
+#include "SuperAmazingEngine\MattEventHandler\EventHandlerPractice\EventHandlerPractice\EventHandler.h"
 #include "SuperAmazingEngine\gameBoard\gameBoard.h"
-//#include "SuperAmazingEngine\physics folder\Sprite\SpriteDemo\physics.h"
-//#include "SuperAmazingEngine\RenderManager\RenderManager.h"
+#include "SuperAmazingEngine\phys\Sprite\physics.h"
+#include "SuperAmazingEngine\RenderManager\renderManager.h"
 
 class GameObject
 {
