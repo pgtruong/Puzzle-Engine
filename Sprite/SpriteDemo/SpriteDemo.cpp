@@ -156,12 +156,12 @@ int main(int argc, char **argv){
 			if (e.type == SDL_QUIT){
 				quit = true;
 			}
-			std::vector<Sprite*>::iterator it; //collding not working
-			if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 0) //sprite is inside boundary, not touching the "walls/corners"
+			/*std::vector<Sprite*>::iterator it; //collding not working
+			if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->NONE) //sprite is inside boundary, not touching the "walls/corners"
 			{
 				for (it = spritecollection.begin(); it != spritecollection.end(); ++it) //going through each sprite to test for collision
 				{
-					if (physic->collisiondetection(sprite, *it) == 11) //it is touching sprite's left
+					if (physic->collisiondetection(sprite, *it) == physic->LEFT) //it is touching sprite's left
 					{
 						if (e.type == SDL_KEYDOWN){
 							if (e.key.keysym.sym == SDLK_RIGHT)
@@ -181,7 +181,7 @@ int main(int argc, char **argv){
 							}
 						}
 					}
-					else if (physic->collisiondetection(sprite, *it) == 22) //object is touching sprite's right
+					else if (physic->collisiondetection(sprite, *it) == physic->RIGHT) //object is touching sprite's right
 					{
 						if (e.type == SDL_KEYDOWN){
 							if (e.key.keysym.sym == SDLK_LEFT)
@@ -201,7 +201,7 @@ int main(int argc, char **argv){
 							}
 						}
 					}
-					else if (physic->collisiondetection(sprite, *it) == 33) //object is touching sprite's top
+					else if (physic->collisiondetection(sprite, *it) == physic->TOP) //object is touching sprite's top
 					{
 						if (e.type == SDL_KEYDOWN){
 							if (e.key.keysym.sym == SDLK_RIGHT)
@@ -221,7 +221,7 @@ int main(int argc, char **argv){
 							}
 						}
 					}
-					else if (physic->collisiondetection(sprite, *it) == 44) //object is touching sprite's bottom
+					else if (physic->collisiondetection(sprite, *it) == physic->BOTTOM) //object is touching sprite's bottom
 					{
 						if (e.type == SDL_KEYDOWN){
 							if (e.key.keysym.sym == SDLK_RIGHT)
@@ -267,8 +267,8 @@ int main(int argc, char **argv){
 						}
 					}
 				}
-			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 1)
+			}*/
+			if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->TOPLEFT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -283,7 +283,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 2)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->TOPRIGHT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_LEFT)
@@ -298,7 +298,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 3)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->BOTTOMLEFT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -313,7 +313,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 4)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->BOTTOMRIGHT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_LEFT)
@@ -328,7 +328,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 5)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->LEFT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -348,7 +348,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 6)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->RIGHT)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_LEFT)
@@ -368,7 +368,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 7)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->TOP)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -388,7 +388,7 @@ int main(int argc, char **argv){
 					}
 				}
 			}
-			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == 8)
+			else if (physic->boundarycheck(sprite, 100, 100, 440, 280) == physic->BOTTOM)
 			{
 				if (e.type == SDL_KEYDOWN){
 					if (e.key.keysym.sym == SDLK_RIGHT)
@@ -405,6 +405,31 @@ int main(int argc, char **argv){
 					{
 						sprite->movey(-5);
 						spriteDirection = "float up";
+					}
+				}
+			}
+			else
+			{
+				if (e.type == SDL_KEYDOWN){
+					if (e.key.keysym.sym == SDLK_RIGHT)
+					{
+						sprite->movex(5);
+						spriteDirection = "walk right";
+					}
+					else if (e.key.keysym.sym == SDLK_LEFT)
+					{
+						sprite->movex(-5);
+						spriteDirection = "walk left";
+					}
+					else if (e.key.keysym.sym == SDLK_UP)
+					{
+						sprite->movey(-5);
+						spriteDirection = "float up";
+					}
+					else if (e.key.keysym.sym == SDLK_DOWN)
+					{
+						sprite->movey(5);
+						spriteDirection = "float down";
 					}
 				}
 			}
