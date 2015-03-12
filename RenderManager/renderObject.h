@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SDL.h>
 
 //To comply with the renderManager you must:
@@ -16,7 +18,7 @@
 class renderObject
 {
 public:
-	virtual ~renderObject() = 0; // Wanted to make = default, but my VS doesn't support?
+	virtual ~renderObject() = default; // Wanted to make = default, but my VS doesn't support?
 	virtual void render(SDL_Renderer* ren) = 0;
 
 	virtual int getLayer() = 0;
