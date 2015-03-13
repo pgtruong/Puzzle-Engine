@@ -67,3 +67,8 @@ void RenderManager::update()
 	});
 	SDL_RenderPresent(ren);
 }
+
+SDL_Renderer* RenderManager::getRenderer()
+{
+	return ren;
+}

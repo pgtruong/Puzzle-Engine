@@ -18,14 +18,17 @@ private:
 	RenderManager();
 
 public:
-	void Initialize(std::string name, int x = 100, int y = 100, int w = 640, int h = 480);
+	void Initialize(std::string name, int x = 100, int y = 100, int w = 640, int h = 480); //After constructing the instance, call this to properly initialize
+																						//This is to comply with singleton standards
 	~RenderManager();
 
-	static RenderManager* getInstance();
+	static RenderManager* getInstance(); //Use this get the only instance of renderManager of a program
 
 	void subscribe(renderObject *robj);
 	void unsubscribe(renderObject *robj);
 	void move(renderObject* robj);
+
+	SDL_Renderer* getRenderer();
 
 	void update(); //Render the next frame
 
