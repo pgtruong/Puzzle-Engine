@@ -1,0 +1,134 @@
+#include <SDL.h>
+#include "SDL_ttf.h"
+#include <vector>
+#include <UserInterface.h>
+#include <Texty.h>
+#include <Sprite.h>
+
+
+UserInterface::UserInterface(int width, int height, SDL_Renderer* renderer, std::string fontName, int fontSize, bool visible, SDL_Color color)
+{
+	UserInterface::width = width;
+	UserInterface::height = height;
+	UserInterface::renderer = renderer;
+	
+	texty = new Texty(renderer, fontName, fontSize, visible);
+	
+	sbuttonIndex = 0;
+
+
+	seqList[0] = "Mouse Out";
+	seqList[1] = "Mouse Over";
+	seqList[2] = "Mouse Down";
+	seqList[3] = "Mouse Up";
+	
+}
+UserInterface::~UserInterface()
+{
+	delete texty;
+	
+}
+void UserInterface::writeText(std::string text, int x, int y)
+{
+	
+	texty->write(text, x, y);
+}
+
+void UserInterface::makeButton(int x, int y, int w, int h, SDL_Texture* texture, int id)
+{
+	button sButton;
+	sButton.seqName = seqList[0];
+	sButton.bTexture = texture;
+
+	sButton.box.x = x;
+	sButton.box.y = y;
+	sButton.box.w = w;
+	sButton.box.h = h;
+	sButton.id = id;
+
+	sButton.Bsprite = new Sprite(w, h, renderer);
+	//sButton.Bsprite->addFrameToSequence(seqList[0].c_str(), sButton.Bsprite->makeFrame(texture, 0, 0));
+	sButton.Bsprite->setPos(x, y);
+	Bvec.push_back(sButton);
+	sbuttonIndex++;
+}
+
+void UserInterface::addSeqToButton(int index, std::string bEvent, int x, int y, SDL_Texture* texture)
+{
+	
+	Bvec.at(index).Bsprite->addFrameToSequence(bEvent.c_str(), Bvec.at(index).Bsprite->makeFrame(texture, x, y));
+	
+}
+
+void UserInterface::showButtons()
+{
+	
+	for (int i = 0; i < sbuttonIndex; i++)
+	{
+		Bvec.at(i).Bsprite->show(Bvec.at(i).seqName.c_str());
+	}
+}
+
+void UserInterface::buttonhandler(SDL_Event e)
+{
+	
+
+	// The mouse offsets
+	
+	for (int i = 0; i < sbuttonIndex; i++)
+	{		
+			//button Cbutton = Bvec.at(0);
+		int x = 0, y = 0;
+			// If the mouse moved
+		if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
+			{
+				// Get the mouse offsets
+				x = e.button.x;
+				y = e.button.y;
+				bool inside = true;
+				// If the mouse is over the button
+				if (x < Bvec.at(i).box.x) 
+				{
+					inside = false;
+				}
+				else if (x > Bvec.at(i).box.x + Bvec.at(i).box.w)
+				{
+					inside = false;
+				}
+				else if (y < Bvec.at(i).box.y)
+				{
+					inside = false;
+				}
+				else if (y > Bvec.at(i).box.y + Bvec.at(i).box.h)
+				{
+					inside = false;
+				}
+				// If not
+				if (!inside)
+				{
+					// set the button sprite to mouse out
+					Bvec.at(i).seqName = seqList[0];
+				}
+				else
+				{
+					switch (e.type)
+					{
+					case SDL_MOUSEMOTION:
+						// set the button sprite to mouse over
+						Bvec.at(i).seqName = seqList[1];
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						// Set the button sprite to mouse down
+						Bvec.at(i).seqName = seqList[2];
+						break;
+					case SDL_MOUSEBUTTONUP:
+						// Set the button sprite to mouse up
+						Bvec.at(i).seqName = seqList[3];
+						break;
+					}
+				}
+			}
+
+			
+		}	
+}
